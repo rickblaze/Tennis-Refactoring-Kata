@@ -3,16 +3,21 @@ package com.clean.code.game.point;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.clean.code.game.score.TiedScoreFinder;
+
 public class GameScorer {
 	
 	private Map<String, Integer> playerPoints;
 	private String player1;
 	private String player2;
 	
+	private TiedScoreFinder tiedScoreFinder;
+	
 	public GameScorer(String player1, String player2){
 		this.player1 = player1;
 		this.player2 = player2;
 		initializeScorerWithPlayers(this.player1, this.player2);
+		tiedScoreFinder = new TiedScoreFinder();
 	}
 
 	private void initializeScorerWithPlayers(String player1, String player2) {
@@ -32,24 +37,11 @@ public class GameScorer {
         int player1Score = playerPoints.get(player1);
         int player2Score = playerPoints.get(player2);
         
-        if (player1Score == player2Score)
+        // Created method to check for Tied Score
+        if (areScoresTied(player1Score, player2Score))
         {
-            switch (player1Score)
-            {
-                case 0:
-                        score = "Love-All";
-                    break;
-                case 1:
-                        score = "Fifteen-All";
-                    break;
-                case 2:
-                        score = "Thirty-All";
-                    break;
-                default:
-                        score = "Deuce";
-                    break;
-                
-            }
+        	// Code Smell - Switch Case statements.
+        	return tiedScoreFinder.getScore(player1Score, player2Score);
         }
         else if (player1Score>=4 || player2Score>=4)
         {
@@ -85,4 +77,7 @@ public class GameScorer {
         return score;
     }
 
+	private boolean areScoresTied(int player1Score, int player2Score) {
+		return player1Score == player2Score;
+	}
 }
