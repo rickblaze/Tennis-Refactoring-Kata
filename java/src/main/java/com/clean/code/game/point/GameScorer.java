@@ -9,6 +9,7 @@ import com.clean.code.game.score.TiedScoreFinder;
 
 public class GameScorer {
 	
+	private static final int ZERO_POINT = 0;
 	private Map<String, Integer> playerPoints;
 	private String player1;
 	private String player2;
@@ -28,13 +29,17 @@ public class GameScorer {
 
 	private void initializeScorerWithPlayers(String player1, String player2) {
 		playerPoints = new HashMap<>();
-		playerPoints.put(player1, 0);
-		playerPoints.put(player2, 0);
+		playerPoints.put(player1, ZERO_POINT);
+		playerPoints.put(player2, ZERO_POINT);
 	}
 	
 	public void addPointTo(String player) {
-		playerPoints.put(player, playerPoints.getOrDefault(player, 0) + 1);
+		playerPoints.put(player, addOnePointFor(player));
     }
+
+	public int addOnePointFor(String player) {
+		return playerPoints.getOrDefault(player, ZERO_POINT) + 1;
+	}
 
     public String getScore() {
         int player1Score = playerPoints.get(player1);
