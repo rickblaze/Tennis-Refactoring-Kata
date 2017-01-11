@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.clean.code.game.score.AdvantageScoreFinder;
+import com.clean.code.game.score.NormalScoreFinder;
 import com.clean.code.game.score.TiedScoreFinder;
 
 public class GameScorer {
@@ -14,6 +15,7 @@ public class GameScorer {
 	
 	private TiedScoreFinder tiedScoreFinder;
 	private AdvantageScoreFinder advantageScoreFinder;
+	private NormalScoreFinder normalScoreFinder;
 	
 	public GameScorer(String player1, String player2){
 		this.player1 = player1;
@@ -21,6 +23,7 @@ public class GameScorer {
 		initializeScorerWithPlayers(this.player1, this.player2);
 		tiedScoreFinder = new TiedScoreFinder();
 		advantageScoreFinder = new AdvantageScoreFinder();
+		normalScoreFinder = new NormalScoreFinder();
 	}
 
 	private void initializeScorerWithPlayers(String player1, String player2) {
@@ -34,9 +37,6 @@ public class GameScorer {
     }
 
     public String getScore() {
-        String score = "";
-        int tempScore=0;
-        
         int player1Score = playerPoints.get(player1);
         int player2Score = playerPoints.get(player2);
         
@@ -54,28 +54,9 @@ public class GameScorer {
         }
         else
         {
-            for (int i=1; i<3; i++)
-            {
-                if (i==1) tempScore = player1Score;
-                else { score+="-"; tempScore = player2Score;}
-                switch(tempScore)
-                {
-                    case 0:
-                        score+="Love";
-                        break;
-                    case 1:
-                        score+="Fifteen";
-                        break;
-                    case 2:
-                        score+="Thirty";
-                        break;
-                    case 3:
-                        score+="Forty";
-                        break;
-                }
-            }
+        	//Code - Smell - Multiple if-else & switch statements
+            return normalScoreFinder.getScore(player1Score, player2Score);
         }
-        return score;
     }
 
     private boolean isScoreAnAdvantage(int player1Score, int player2Score) {
