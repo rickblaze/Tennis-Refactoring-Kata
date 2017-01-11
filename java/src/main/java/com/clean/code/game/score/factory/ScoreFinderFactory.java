@@ -1,5 +1,9 @@
 package com.clean.code.game.score.factory;
 
+import static com.clean.code.game.score.ScoreFinderEnum.ADVANTAGE;
+import static com.clean.code.game.score.ScoreFinderEnum.NORMAL;
+import static com.clean.code.game.score.ScoreFinderEnum.TIE;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +25,9 @@ public class ScoreFinderFactory {
 
 	private void initializeScoreLookup() {
 		scoreLookup = new HashMap<>();
-		scoreLookup.put(ScoreFinderEnum.TIE, new TiedScoreFinder());
-		scoreLookup.put(ScoreFinderEnum.ADVANTAGE, new AdvantageScoreFinder());
-		scoreLookup.put(ScoreFinderEnum.NORMAL, new NormalScoreFinder());
+		scoreLookup.put(TIE, new TiedScoreFinder());
+		scoreLookup.put(ADVANTAGE, new AdvantageScoreFinder());
+		scoreLookup.put(NORMAL, new NormalScoreFinder());
 	}
 	
 	public static ScoreFinderFactory getInstance(){
