@@ -3,7 +3,7 @@ package com.clean.code.game.score;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TiedScoreFinder {
+public class TiedScoreFinder implements ScoreFinder {
 	
 private Map<Integer, String> scores;
 	

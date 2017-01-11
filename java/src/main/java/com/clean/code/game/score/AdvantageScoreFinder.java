@@ -2,7 +2,7 @@ package com.clean.code.game.score;
 
 import static java.lang.Math.abs;
 
-public class AdvantageScoreFinder  {
+public class AdvantageScoreFinder implements ScoreFinder {
 	
 	public String getScore(int player1Score, int player2Score){
 		int scoreDifference = player1Score - player2Score;		

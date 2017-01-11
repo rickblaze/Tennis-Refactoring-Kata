@@ -3,7 +3,7 @@ package com.clean.code.game.score;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NormalScoreFinder {
+public class NormalScoreFinder implements ScoreFinder {
 	
 private static final String HYPHEN_SEPARATOR = "-";
 private Map<Integer, String> scores;
