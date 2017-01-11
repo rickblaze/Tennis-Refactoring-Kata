@@ -3,6 +3,7 @@ package com.clean.code.game.point;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.clean.code.game.score.AdvantageScoreFinder;
 import com.clean.code.game.score.TiedScoreFinder;
 
 public class GameScorer {
@@ -12,12 +13,14 @@ public class GameScorer {
 	private String player2;
 	
 	private TiedScoreFinder tiedScoreFinder;
+	private AdvantageScoreFinder advantageScoreFinder;
 	
 	public GameScorer(String player1, String player2){
 		this.player1 = player1;
 		this.player2 = player2;
 		initializeScorerWithPlayers(this.player1, this.player2);
 		tiedScoreFinder = new TiedScoreFinder();
+		advantageScoreFinder = new AdvantageScoreFinder();
 	}
 
 	private void initializeScorerWithPlayers(String player1, String player2) {
@@ -43,13 +46,11 @@ public class GameScorer {
         	// Code Smell - Switch Case statements.
         	return tiedScoreFinder.getScore(player1Score, player2Score);
         }
-        else if (player1Score>=4 || player2Score>=4)
+        // Created method to check for Advantage or Win scenario.
+        else if (isScoreAnAdvantage(player1Score, player2Score))
         {
-            int minusResult = player1Score-player2Score;
-            if (minusResult==1) score ="Advantage player1";
-            else if (minusResult ==-1) score ="Advantage player2";
-            else if (minusResult>=2) score = "Win for player1";
-            else score ="Win for player2";
+        	//Code - Smell - Multiple if-else statements
+            return advantageScoreFinder.getScore(player1Score, player2Score);
         }
         else
         {
@@ -76,6 +77,14 @@ public class GameScorer {
         }
         return score;
     }
+
+    private boolean isScoreAnAdvantage(int player1Score, int player2Score) {
+		return hasPlayerWonFourPoints(player1Score) || hasPlayerWonFourPoints(player2Score);
+	}
+
+	private boolean hasPlayerWonFourPoints(int playerScore) {
+		return playerScore >= 4;
+	}
 
 	private boolean areScoresTied(int player1Score, int player2Score) {
 		return player1Score == player2Score;
