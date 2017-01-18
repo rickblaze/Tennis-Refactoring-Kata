@@ -81,6 +81,30 @@ public class GameScorerShould {
 		assertEquals("Deuce", gameScorer.getScore());
 	}
 	
+	@Test
+	public void return_player1_wins_when_playerA_has_6_and_playerB_has_4_point(){
+		GameScorer gameScorer = GameScorerBuilder
+								.createGameScorer()
+								.addPlayers(PLAYER_A, PLAYER_B)
+								.addPoints(PLAYER_B, PLAYER_A, PLAYER_A, PLAYER_B)
+								.addPoints(PLAYER_B, PLAYER_A, PLAYER_A, PLAYER_B)
+								.addPoints(PLAYER_A, PLAYER_A)
+								.build();
+		assertEquals("Win for player1", gameScorer.getScore());
+	}
+	
+	@Test
+	public void return_fifteen_all_when_player_points_are_zero(){
+		GameScorer gameScorer = GameScorerBuilder
+								.createGameScorer()
+								.addPlayers(PLAYER_A, PLAYER_B)
+								.addPoints(PLAYER_B, PLAYER_A)
+								.build();;
+		assertEquals("Fifteen-All", gameScorer.getScoreForTiedScenario());
+	}
+	
+	
+	
 	public static class GameScorerBuilder {
 		
 		private GameScorer gameScorer;
@@ -96,7 +120,7 @@ public class GameScorerShould {
 		
 		public GameScorerBuilder addPoints(String... players){
 			for(String player : players){
-				gameScorer.addPointTo(player);
+				gameScorer.addPointFor(player);
 			}
 			return this;
 		}

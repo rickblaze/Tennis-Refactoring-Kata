@@ -1,82 +1,103 @@
 package com.clean.code.game.point;
 
-import static com.clean.code.game.score.ScoreFinderEnum.ADVANTAGE;
-import static com.clean.code.game.score.ScoreFinderEnum.NORMAL;
-import static com.clean.code.game.score.ScoreFinderEnum.TIE;
+import static com.clean.code.game.score.ScoreEnum.getTextFor;
+import static com.clean.code.game.score.ScoreEnum.getTextForTie;
+import static java.lang.Math.abs;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.clean.code.game.score.ScoreFinder;
-import com.clean.code.game.score.factory.ScoreFinderFactory;
+import com.clean.code.game.score.PlayerScore;
 
 public class GameScorer {
 	
-	private static final int ZERO_POINT = 0;
-	private Map<String, Integer> playerPoints;
-	private String player1;
-	private String player2;
+	private static final String HYPHEN_DELIMITER = "-";
+	private PlayerScore firstPlayerScore;
+	private PlayerScore secondPlayerScore;
 	
-	private ScoreFinderFactory scoreFactory;
-	private ScoreFinder scoreFinder;
-	
-	public GameScorer(String player1, String player2){
-		this.player1 = player1;
-		this.player2 = player2;
-		scoreFactory = ScoreFinderFactory.getInstance();		
-		initializeScorerWithPlayers(this.player1, this.player2);		
-	}
-
-	private void initializeScorerWithPlayers(String player1, String player2) {
-		playerPoints = new HashMap<>();
-		playerPoints.put(player1, ZERO_POINT);
-		playerPoints.put(player2, ZERO_POINT);
+	public GameScorer(String firstPlayer, String secondPlayer){
+		firstPlayerScore = new PlayerScore(firstPlayer);
+		secondPlayerScore = new PlayerScore(secondPlayer);
 	}
 	
-	public void addPointTo(String player) {
-		playerPoints.put(player, addOnePointFor(player));
+	public void addPointFor(String player) {
+		if(player.equalsIgnoreCase(firstPlayerScore.getPlayer())){
+			firstPlayerScore.addPoint();
+		}else{
+			secondPlayerScore.addPoint();
+		}
     }
 
-	public int addOnePointFor(String player) {
-		return playerPoints.getOrDefault(player, ZERO_POINT) + 1;
-	}
-
     public String getScore() {
-        int player1Score = playerPoints.get(player1);
-        int player2Score = playerPoints.get(player2);
-        
+
+    // Third Step - Code Smell - Anti pattern - Replaced with method.  
         // Created method to check for Tied Score
-        if (areScoresTied(player1Score, player2Score))
+       if (areScoresTied())
         {
         	// First Step: Code Smell - Switch Case statements.
-        	// Second Step - Retrieving ScoreFinder from Factory
-        	scoreFinder = scoreFactory.getScore(TIE);
+        	// Second Step - Retrieving ScoreFinder from Factory    	    
+        	return getScoreForTiedScenario();
         }
         // Created method to check for Advantage or Win scenario.
-        else if (isScoreAnAdvantage(player1Score, player2Score))
+        else if (isScoreAnAdvantage())
         {
         	//Code - Smell - Multiple if-else statements
         	// Second Step - Retrieving ScoreFinder from Factory
-        	scoreFinder = scoreFactory.getScore(ADVANTAGE);
+       	return getScoreForAdvantage();
         }
         else
         {
         	//Code - Smell - Multiple if-else & switch statements
         	//Second Step - Retrieving ScoreFinder from Factory
-        	scoreFinder = scoreFactory.getScore(NORMAL);
+        	return getNormalScore();
         }
-        return scoreFinder.getScore(player1Score, player2Score);
     }
 
-    private boolean isScoreAnAdvantage(int player1Score, int player2Score) {
-		return hasPlayerWonFourPoints(player1Score) || hasPlayerWonFourPoints(player2Score);
+	private boolean areScoresTied() {
+		return firstPlayerScore.equals(secondPlayerScore);
 	}
-
+	protected String getScoreForTiedScenario() {		
+		return getTextForTie(firstPlayerScore.getScore());
+	}
+	
+	
+	private boolean isScoreAnAdvantage() {
+		return hasPlayerWonFourPoints(firstPlayerScore.getScore()) 
+				|| hasPlayerWonFourPoints(secondPlayerScore.getScore());
+	}
+	
 	private boolean hasPlayerWonFourPoints(int playerScore) {
 		return playerScore >= 4;
 	}
-
-	private boolean areScoresTied(int player1Score, int player2Score) {
-		return player1Score == player2Score;
+	
+	protected String getScoreForAdvantage() {
+    	int scoreDifference = firstPlayerScore.getScore() - secondPlayerScore.getScore();
+    	if(abs(scoreDifference) >= 2){
+			return getWinner(scoreDifference);
+		}else{
+			return playerWithAdvantage(scoreDifference);
+		}		
+	}
+	
+	private boolean isPlayer1Leading(int scoreDifference) {
+		return scoreDifference > 0;
+	}
+	
+	private String getWinner(int scoreDifference) {
+		return isPlayer1Leading(scoreDifference) 
+				? "Win for player1" 
+				: "Win for player2";
+	}
+	
+	private String playerWithAdvantage(int scoreDifference) {
+		return isPlayer1Leading(scoreDifference) 
+				? "Advantage player1" 
+				: "Advantage player2";
+	}	
+	
+	
+	protected String getNormalScore() {
+		return new StringBuilder()
+					.append(getTextFor(firstPlayerScore.getScore()))
+					.append(HYPHEN_DELIMITER)
+					.append(getTextFor(secondPlayerScore.getScore()))
+					.toString();
 	}
 }

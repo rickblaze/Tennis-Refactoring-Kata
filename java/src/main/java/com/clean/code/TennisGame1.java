@@ -13,7 +13,7 @@ public class TennisGame1 implements TennisGame {
 
 	@Override
 	public void wonPoint(String playerName) {
-		gameScorer.addPointTo(playerName);		
+		gameScorer.addPointFor(playerName);		
 	}
 	
 	//Code Smell - Bloating & If-else, Switch case statement
