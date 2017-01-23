@@ -1,10 +1,14 @@
 package com.clean.code.game.point;
 
-import static com.clean.code.game.score.ScoreEnum.getTextFor;
-import static com.clean.code.game.score.ScoreEnum.getTextForTie;
+import static com.clean.code.game.score.ScoreEnum.Forty;
+import static com.clean.code.game.score.ScoreEnum.values;
 import static java.lang.Math.abs;
+import static java.util.Arrays.asList;
+
+import java.util.Optional;
 
 import com.clean.code.game.score.PlayerScore;
+import com.clean.code.game.score.ScoreEnum;
 
 public class GameScorer {
 	
@@ -53,8 +57,18 @@ public class GameScorer {
 	private boolean areScoresTied() {
 		return firstPlayerScore.equals(secondPlayerScore);
 	}
-	protected String getScoreForTiedScenario() {		
-		return getTextForTie(firstPlayerScore.getScore());
+	
+	protected String getScoreForTiedScenario() {
+		Optional<ScoreEnum> scoreEnumForPoint = asList(values()).stream()
+		   .filter(scoreEnum -> scoreEnum.getScore() == firstPlayerScore.getScore())
+		   .findAny();
+		return scoreEnumForPoint.isPresent() 
+			   ? scoreEnumForPoint.get().getTiedScore() 
+			   : getScoreForDeuce();
+	}
+
+	private String getScoreForDeuce() {
+		return Forty.getTiedScore();
 	}
 	
 	
@@ -68,7 +82,8 @@ public class GameScorer {
 	}
 	
 	protected String getScoreForAdvantage() {
-    	int scoreDifference = firstPlayerScore.getScore() - secondPlayerScore.getScore();
+    	int scoreDifference = firstPlayerScore.getScore() 
+    						  - secondPlayerScore.getScore();
     	if(abs(scoreDifference) >= 2){
 			return getWinner(scoreDifference);
 		}else{
@@ -99,5 +114,14 @@ public class GameScorer {
 					.append(HYPHEN_DELIMITER)
 					.append(getTextFor(secondPlayerScore.getScore()))
 					.toString();
+	}
+	
+	private String getTextFor(int playerScore){
+		return asList(values())
+				.stream()
+				.filter(scoreEnum -> scoreEnum.getScore() == playerScore)
+				.findAny()
+				.get()
+				.name();
 	}
 }

@@ -34,4 +34,12 @@ public enum ScoreEnum {
 							   .findAny()
 							   .get().name();
 	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public String getTiedScore() {
+		return scoreText;
+	}
 }
